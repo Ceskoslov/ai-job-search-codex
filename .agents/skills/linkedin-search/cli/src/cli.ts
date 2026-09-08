@@ -1,14 +1,14 @@
-#!/usr/bin/env bun
+#!/usr/bin/env -S node
 // Self-contained CLI for searching jobs on LinkedIn's public jobs-guest endpoints,
 // for any country/region (plus remote). No external CLI framework, so it runs
-// anywhere `bun` is available with zero install beyond the repo clone.
+// anywhere Node.js 22.18+ is available with zero install beyond the repo clone.
 //
 // Personal use only. This reads LinkedIn's public job pages; automated access is
 // against LinkedIn's Terms of Service, so keep volume low and do not use it
 // commercially or for bulk data collection. Run it on your own responsibility.
 
-import { runSearch, type SearchOpts } from "./commands/search.js"
-import { runDetail, type DetailOpts } from "./commands/detail.js"
+import { runSearch, type SearchOpts } from "./commands/search.ts"
+import { runDetail, type DetailOpts } from "./commands/detail.ts"
 
 interface Flags {
   _: string[]
@@ -18,10 +18,15 @@ interface Flags {
 function parseFlags(argv: string[]): Flags {
   const flags: Flags = { _: [] }
   const alias: Record<string, string> = { q: "query", l: "location", n: "limit" }
+  const booleanFlags = new Set(["dry-run", "help", "h"])
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]
     if (a.startsWith("--") || a.startsWith("-")) {
       const key = alias[a.replace(/^-+/, "")] ?? a.replace(/^-+/, "")
+      if (booleanFlags.has(key)) {
+        flags[key] = true
+        continue
+      }
       const next = argv[i + 1]
       if (next === undefined || next.startsWith("-")) {
         flags[key] = true
@@ -39,8 +44,8 @@ function parseFlags(argv: string[]): Flags {
 const HELP = `linkedin-cli — search jobs on LinkedIn (any country/region, plus remote)
 
 USAGE
-  bun run src/cli.ts search --location "<place>" [flags]
-  bun run src/cli.ts detail <id|url> [--format json|plain]
+  node src/cli.ts search --location "<place>" [flags]
+  node src/cli.ts detail <id|url> [--format json|plain] [--dry-run]
 
 SEARCH FLAGS
   --location, -l <text>   Location to search. REQUIRED. e.g. "Mumbai, Maharashtra, India",
@@ -52,13 +57,14 @@ SEARCH FLAGS
   --page <n>              1-indexed page (10 results/page). Default 1.
   --limit, -n <n>         Cap results emitted (client-side).
   --format <fmt>          json (default) | table | plain.
+  --dry-run               Validate arguments and print the request URL without fetching it.
 
 EXAMPLES
-  bun run src/cli.ts search -q "data engineer" -l "Bengaluru, Karnataka, India" --jobage 30 --format table
-  bun run src/cli.ts search -q "product manager" -l "Berlin, Germany" --remote remote --format table
-  bun run src/cli.ts search -q "paralegal" -l "Remote" --format table
-  bun run src/cli.ts search -q "engineer" -l "Remote" --jobage-minutes 30 --format table
-  bun run src/cli.ts detail 4300011451 --format plain
+  node src/cli.ts search -q "data engineer" -l "Bengaluru, Karnataka, India" --jobage 30 --format table
+  node src/cli.ts search -q "product manager" -l "Berlin, Germany" --remote remote --format table
+  node src/cli.ts search -q "paralegal" -l "Remote" --format table
+  node src/cli.ts search -q "engineer" -l "Remote" --jobage-minutes 30 --format table
+  node src/cli.ts detail 4300011451 --format plain
 
 Personal use only — uses LinkedIn's public pages; keep volume low (LinkedIn ToS).
 `
@@ -68,9 +74,9 @@ Personal use only — uses LinkedIn's public pages; keep volume low (LinkedIn To
 // still prints usage.
 const KNOWN_FLAGS: Record<string, Set<string>> = {
   search: new Set([
-    "location", "query", "jobage", "jobage-minutes", "remote", "page", "limit", "format", "help", "h",
+    "location", "query", "jobage", "jobage-minutes", "remote", "page", "limit", "format", "dry-run", "help", "h",
   ]),
-  detail: new Set(["format", "help", "h"]),
+  detail: new Set(["format", "dry-run", "help", "h"]),
 }
 
 async function main(): Promise<number> {
@@ -168,6 +174,7 @@ async function main(): Promise<number> {
       remote: typeof flags.remote === "string" ? flags.remote : undefined,
       page: flags.page ? Math.max(1, parseInt(flags.page as string, 10)) : 1,
       limit: flags.limit ? parseInt(flags.limit as string, 10) : undefined,
+      dryRun: flags["dry-run"] === true,
       format: (["json", "table", "plain"].includes(fmt) ? fmt : "json") as SearchOpts["format"],
     }
     return runSearch(opts)
@@ -183,6 +190,7 @@ async function main(): Promise<number> {
     const opts: DetailOpts = {
       id,
       format: (fmt === "plain" ? "plain" : "json") as DetailOpts["format"],
+      dryRun: flags["dry-run"] === true,
     }
     return runDetail(opts)
   }
@@ -192,7 +200,11 @@ async function main(): Promise<number> {
 }
 
 main()
-  .then((code) => process.exit(code))
+  // Do not call process.exit() here: it can terminate before piped stdout or
+  // stderr has flushed. Setting exitCode lets Node drain both streams first.
+  .then((code) => {
+    process.exitCode = code
+  })
   .catch((e) => {
     process.stderr.write(
       JSON.stringify({
@@ -200,5 +212,5 @@ main()
         code: "INTERNAL_ERROR",
       }) + "\n",
     )
-    process.exit(1)
+    process.exitCode = 1
   })

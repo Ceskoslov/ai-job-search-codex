@@ -7,7 +7,7 @@ import {
   workTypeFlag,
   writeError,
   type JobCard,
-} from "../helpers.js"
+} from "../helpers.ts"
 
 export interface SearchOpts {
   query?: string
@@ -17,10 +17,11 @@ export interface SearchOpts {
   remote?: string // "remote" | "hybrid" | "onsite"
   page: number
   limit?: number
+  dryRun?: boolean
   format: "json" | "table" | "plain"
 }
 
-function buildUrl(opts: SearchOpts): string {
+export function buildUrl(opts: SearchOpts): string {
   const params = new URLSearchParams()
   if (opts.query) params.set("keywords", opts.query)
   if (opts.location) params.set("location", opts.location)
@@ -55,7 +56,12 @@ function renderTable(cards: JobCard[]): string {
 
 export async function runSearch(opts: SearchOpts): Promise<number> {
   try {
-    const html = await htmlFetch(buildUrl(opts))
+    const url = buildUrl(opts)
+    if (opts.dryRun) {
+      process.stdout.write(JSON.stringify({ dryRun: true, method: "GET", url }, null, 2) + "\n")
+      return 0
+    }
+    const html = await htmlFetch(url)
     let cards = parseJobCards(html)
     if (opts.limit !== undefined && opts.limit >= 0) cards = cards.slice(0, opts.limit)
 

@@ -1,4 +1,4 @@
-# Weekly upstream triage. Reports only - it NEVER merges, pushes, or edits code.
+# Manual upstream triage. Reports only - it NEVER merges, pushes, or edits code.
 #
 # It fetches the upstream template, runs tools/upstream_triage.py to sort the
 # commits this fork lacks into "worth reviewing" vs "probably skip" (dropping
@@ -26,8 +26,6 @@
 name: Upstream watch
 
 on:
-  schedule:
-    - cron: "0 8 * * 1" # 08:00 UTC every Monday
   workflow_dispatch:
 
 permissions:

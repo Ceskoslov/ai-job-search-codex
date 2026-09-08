@@ -1,0 +1,4 @@
+interface:
+  display_name: "Job Search Workflow"
+  short_description: "Run the local job-search workflow safely"
+  default_prompt: "Use $job-search-workflow to help with my job search."

@@ -1,5 +1,6 @@
-import { afterEach, describe, expect, test } from "bun:test";
-import { htmlFetch } from "../src/helpers";
+import { afterEach, describe, test } from "node:test";
+import { expect } from "./expect.ts";
+import { htmlFetch } from "../src/helpers.ts";
 
 // A stalled upstream connection (accepted socket, no response) would otherwise
 // hang the CLI forever - fetch has no default timeout. Assert the request

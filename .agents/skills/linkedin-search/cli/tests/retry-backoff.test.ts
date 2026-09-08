@@ -1,5 +1,6 @@
-import { afterEach, describe, expect, test } from "bun:test";
-import { htmlFetch } from "../src/helpers";
+import { afterEach, describe, test } from "node:test";
+import { expect } from "./expect.ts";
+import { htmlFetch } from "../src/helpers.ts";
 
 // The portal contract requires backoff on 429/5xx. These tests pin the retry
 // loop offline: a stubbed fetch counts attempts, and a stubbed setTimeout

@@ -20,9 +20,9 @@ Checks:
    and no un-allowlisted negation (!pattern) may re-include them. Catches
    weakening that would make future users silently commit their tracker,
    profile exports, or application archives.
-3. .agents/**/package.json — no npm/bun lifecycle scripts (preinstall,
+3. .agents/**/package.json — no package-manager lifecycle scripts (preinstall,
    install, postinstall, prepare, prepack) and no trustedDependencies.
-   Catches code execution smuggled into `bun install`.
+   Catches code execution smuggled into a dependency installation.
 
 Stdlib only. Exit 0 on success, 1 with a failure list otherwise.
 """
@@ -38,17 +38,10 @@ errors: list[str] = []
 # an entry must add it here too - that is the point: the diff shows both.
 ALLOWED_PERMISSIONS = {
     "Skill(job-application-assistant)",
-    # Narrowed from the upstream template's blanket Bash(bun run:*), which
-    # pre-approved `bun run <any file>`. One entry per shipped portal CLI,
-    # matching what each SKILL.md already declares in its allowed-tools.
+    # One entry per shipped portal CLI, matching what its SKILL.md declares.
     # A portal added by /add-portal needs its own entry here and in
     # .claude/settings.json - that review step is the point.
-    "Bash(bun run .agents/skills/jobbank-search/cli/src/cli.ts:*)",
-    "Bash(bun run .agents/skills/jobdanmark-search/cli/src/cli.ts:*)",
-    "Bash(bun run .agents/skills/jobindex-search/cli/src/cli.ts:*)",
-    "Bash(bun run .agents/skills/jobnet-search/cli/src/cli.ts:*)",
-    "Bash(bun run .agents/skills/linkedin-search/cli/src/cli.ts:*)",
-    "Bash(bun run .agents/skills/freehire-search/cli/src/cli.ts:*)",
+    "Bash(node .agents/skills/linkedin-search/cli/src/cli.ts:*)",
     "Bash(python salary_lookup.py:*)",
     "Bash(python3 salary_lookup.py:*)",
     "Bash(python tools/rank_state.py:*)",
@@ -263,12 +256,12 @@ def check_package_manifests() -> None:
         if bad:
             errors.append(
                 f"{relpath}: lifecycle script(s) {sorted(bad)} are forbidden - they execute "
-                "arbitrary code during `bun install` on every fork user's machine."
+                "arbitrary code during dependency installation on a user's machine."
             )
         if "trustedDependencies" in data:
             errors.append(
                 f"{relpath}: trustedDependencies is forbidden - it re-enables dependency "
-                "lifecycle scripts that bun blocks by default."
+                "package lifecycle scripts."
             )
 
 

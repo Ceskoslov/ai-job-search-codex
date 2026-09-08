@@ -1,5 +1,6 @@
-import { afterEach, describe, expect, test } from "bun:test";
-import { runSearch } from "../src/commands/search";
+import { afterEach, describe, test } from "node:test";
+import { expect } from "./expect.ts";
+import { runSearch } from "../src/commands/search.ts";
 
 const originalFetch = globalThis.fetch;
 const originalStdoutWrite = process.stdout.write;

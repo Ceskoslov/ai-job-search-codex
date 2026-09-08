@@ -1,6 +1,7 @@
-import { describe, test, expect } from "bun:test";
-import { parseJobCards, parseJobDetail, extractDivContent, minutesToTPR } from "../src/helpers";
-import { normalizeId } from "../src/commands/detail";
+import { describe, test } from "node:test";
+import { expect } from "./expect.ts";
+import { parseJobCards, parseJobDetail, extractDivContent, minutesToTPR } from "../src/helpers.ts";
+import { normalizeId } from "../src/commands/detail.ts";
 
 // Minimal search-card markup: parseJobCards splits on the job-posting URN and
 // needs an id, a base-search-card__title, and a full-link. Everything else is
@@ -274,4 +275,3 @@ describe("normalizeId", () => {
     expect(normalizeId("")).toBeNull();
   });
 });
-

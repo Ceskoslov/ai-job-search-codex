@@ -1,8 +1,9 @@
-import { DETAIL_URL, htmlFetch, parseJobDetail, writeError } from "../helpers.js"
+import { DETAIL_URL, htmlFetch, parseJobDetail, writeError } from "../helpers.ts"
 
 export interface DetailOpts {
   id: string
   format: "json" | "plain"
+  dryRun?: boolean
 }
 
 /** Accept a raw job ID, a job-view URL, or a job URN. */
@@ -23,7 +24,12 @@ export async function runDetail(opts: DetailOpts): Promise<number> {
     return 1
   }
   try {
-    const html = await htmlFetch(`${DETAIL_URL}/${id}`)
+    const url = `${DETAIL_URL}/${id}`
+    if (opts.dryRun) {
+      process.stdout.write(JSON.stringify({ dryRun: true, method: "GET", url }, null, 2) + "\n")
+      return 0
+    }
+    const html = await htmlFetch(url)
     if (!html) {
       writeError("Job not found", "NOT_FOUND")
       return 1

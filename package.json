@@ -1,0 +1,18 @@
+{
+  "name": "local-ai-job-search",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local, agent-portable job-search workspace with a Node.js LinkedIn CLI",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "jobs": "node .agents/skills/linkedin-search/cli/src/cli.ts",
+    "jobs:help": "node .agents/skills/linkedin-search/cli/src/cli.ts --help",
+    "test:linkedin": "node --test --test-concurrency=1 .agents/skills/linkedin-search/cli/tests/*.test.ts",
+    "test:python": "python3 -B -m unittest discover -s tests -t .",
+    "test": "npm run test:linkedin && npm run test:python"
+  },
+  "dependencies": {}
+}

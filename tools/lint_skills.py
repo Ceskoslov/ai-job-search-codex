@@ -6,7 +6,7 @@ Run from anywhere: python tools/lint_skills.py
 Checks:
 - Every SKILL.md (.claude/skills/*, .agents/skills/*) has YAML frontmatter that
   parses, with non-empty `name` and `description` keys
-- `allowed-tools` entries of the form `Bash(bun run <path> *)` point at files
+- `allowed-tools` entries containing `node <path>` or `bun run <path>` point at files
   that exist (skill paths resolve relative to the repo root and to .agents/)
 - Every .claude/commands/*.md starts with a `# /<name>` title
 - .claude/settings.json is valid JSON with a permissions.allow list
@@ -55,7 +55,7 @@ def check_skill(path: Path) -> None:
 
     allowed = data.get("allowed-tools", "")
     if isinstance(allowed, str):
-        for match in re.finditer(r"bun run ([^\s)]+)", allowed):
+        for match in re.finditer(r"(?:bun run|node) ((?!-)[^\s)]+)", allowed):
             target = match.group(1).rstrip("*")
             if not target or target.endswith("/"):
                 continue

@@ -1,5 +1,6 @@
-import { describe, test, expect } from "bun:test";
-import { runCLI } from "./helpers";
+import { describe, test } from "node:test";
+import { expect } from "./expect.ts";
+import { runCLI } from "./helpers.ts";
 
 const LOCATION = "Copenhagen, Denmark";
 
@@ -28,7 +29,7 @@ describe("LinkedIn CLI flag validation", () => {
     });
 
     test("valid integer passes validation", async () => {
-      const result = await runCLI(["search", "-l", LOCATION, "--jobage", "7", "--limit", "1"]);
+      const result = await runCLI(["search", "-l", LOCATION, "--jobage", "7", "--limit", "1", "--dry-run"]);
       const err = parsedStderr(result.stderr);
       expect(err.code).not.toBe("BAD_ARG");
     });
@@ -38,7 +39,7 @@ describe("LinkedIn CLI flag validation", () => {
     // omitted from the outbound request while the CLI exits 0 (#371).
     for (const name of ["jobage", "jobage-minutes", "page", "limit"]) {
       test(`--${name} fractional exits 1 with BAD_ARG instead of truncating`, async () => {
-        const result = await runCLI(["search", "-l", LOCATION, `--${name}`, "1.5"]);
+        const result = await runCLI(["search", "-l", LOCATION, `--${name}`, "1.5", "--dry-run"]);
         expect(result.exitCode).not.toBe(0);
         const err = parsedStderr(result.stderr);
         expect(err.code).toBe("BAD_ARG");
@@ -47,14 +48,14 @@ describe("LinkedIn CLI flag validation", () => {
     }
 
     test("--jobage 0.5 exits 1 with BAD_ARG instead of dropping the freshness filter", async () => {
-      const result = await runCLI(["search", "-l", LOCATION, "--jobage", "0.5"]);
+      const result = await runCLI(["search", "-l", LOCATION, "--jobage", "0.5", "--dry-run"]);
       expect(result.exitCode).not.toBe(0);
       expect(parsedStderr(result.stderr).code).toBe("BAD_ARG");
     });
 
     for (const name of ["jobage", "jobage-minutes", "page", "limit"]) {
       test(`--${name} 0 exits 1 with BAD_ARG`, async () => {
-        const result = await runCLI(["search", "-l", LOCATION, `--${name}`, "0"]);
+        const result = await runCLI(["search", "-l", LOCATION, `--${name}`, "0", "--dry-run"]);
         expect(result.exitCode).not.toBe(0);
         const err = parsedStderr(result.stderr);
         expect(err.code).toBe("BAD_ARG");
@@ -65,7 +66,7 @@ describe("LinkedIn CLI flag validation", () => {
 
   describe("--jobage-minutes validation", () => {
     test("non-numeric string exits 1 with BAD_ARG", async () => {
-      const result = await runCLI(["search", "-l", LOCATION, "--jobage-minutes", "foo"]);
+      const result = await runCLI(["search", "-l", LOCATION, "--jobage-minutes", "foo", "--dry-run"]);
       expect(result.exitCode).not.toBe(0);
       const err = parsedStderr(result.stderr);
       expect(err.code).toBe("BAD_ARG");
@@ -90,7 +91,7 @@ describe("LinkedIn CLI flag validation", () => {
   describe("--jobage / --jobage-minutes conflict", () => {
     test("both set exits 1 with CONFLICTING_AGE_FLAGS", async () => {
       const result = await runCLI([
-        "search", "-l", LOCATION, "--jobage", "7", "--jobage-minutes", "30",
+        "search", "-l", LOCATION, "--jobage", "7", "--jobage-minutes", "30", "--dry-run",
       ]);
       expect(result.exitCode).not.toBe(0);
       const err = parsedStderr(result.stderr);
@@ -100,7 +101,7 @@ describe("LinkedIn CLI flag validation", () => {
 
   describe("--page NaN validation", () => {
     test("non-numeric string exits 1 with BAD_ARG", async () => {
-      const result = await runCLI(["search", "-l", LOCATION, "--page", "abc"]);
+      const result = await runCLI(["search", "-l", LOCATION, "--page", "abc", "--dry-run"]);
       expect(result.exitCode).not.toBe(0);
       const err = parsedStderr(result.stderr);
       expect(err.code).toBe("BAD_ARG");
@@ -110,7 +111,7 @@ describe("LinkedIn CLI flag validation", () => {
 
   describe("--limit NaN validation", () => {
     test("non-numeric string exits 1 with BAD_ARG", async () => {
-      const result = await runCLI(["search", "-l", LOCATION, "--limit", "xyz"]);
+      const result = await runCLI(["search", "-l", LOCATION, "--limit", "xyz", "--dry-run"]);
       expect(result.exitCode).not.toBe(0);
       const err = parsedStderr(result.stderr);
       expect(err.code).toBe("BAD_ARG");
@@ -128,7 +129,7 @@ describe("LinkedIn CLI flag validation", () => {
 
     test("all valid flags produce no BAD_ARG", async () => {
       const result = await runCLI([
-        "search", "-l", LOCATION, "--jobage", "7", "--page", "1", "--limit", "5",
+        "search", "-l", LOCATION, "--jobage", "7", "--page", "1", "--limit", "5", "--dry-run",
       ]);
       const err = parsedStderr(result.stderr);
       expect(err.code).not.toBe("BAD_ARG");
@@ -150,5 +151,23 @@ describe("unknown flag rejection", () => {
     const error = JSON.parse(result.stderr);
     expect(error.code).toBe("UNKNOWN_FLAG");
     expect(error.error).toContain("--bogus-flag");
+  });
+});
+
+describe("dry-run safety", () => {
+  test("search dry-run does not consume the next flag", async () => {
+    const result = await runCLI([
+      "search", "-l", LOCATION, "--dry-run", "--format", "table",
+    ]);
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain('"dryRun": true');
+    expect(result.stdout).toContain("seeMoreJobPostings/search");
+  });
+
+  test("detail dry-run validates and prints the endpoint without fetching", async () => {
+    const result = await runCLI(["detail", "4426311357", "--dry-run"]);
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain('"dryRun": true');
+    expect(result.stdout).toContain("jobPosting/4426311357");
   });
 });
