@@ -31,6 +31,7 @@ Codex、Claude Code 或其他能够读取 `AGENTS.md`/skill 的代理执行。
 - npm（随 Node 安装；本项目无第三方 JavaScript 运行依赖）
 - Python 3.10+（本地工具与测试）
 - Codex CLI、Claude Code 或其他支持仓库指令的代理，任选其一
+  （Claude Code 需要付费订阅或 Anthropic API 额度）
 - 生成 PDF 时才需要：`lualatex` 和 `xelatex`
 - 可选：`pypdf` 或 `pdftotext`，用于 ATS 文本层检查
 

@@ -4,7 +4,7 @@ description: >
   Finds LinkedIn job postings matching the candidate profile, deduplicates them,
   and presents a local shortlist. Triggers on: job scrape, find jobs, search jobs,
   new jobs, job search, scrape jobs, /scrape
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash(node --version), Bash(node .agents/skills/linkedin-search/cli/src/cli.ts *), WebFetch, WebSearch, Agent, AskUserQuestion
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash(node --version), Bash(node .agents/skills/linkedin-search/cli/src/cli.ts *), Bash(python tools/job_key.py:*), Bash(python3 tools/job_key.py:*), WebFetch, WebSearch, Agent, AskUserQuestion
 ---
 
 # LinkedIn Job Scraper
@@ -69,16 +69,29 @@ Assign a quick High/Medium/Low fit. Enforce the language and deal-breaker gates 
 
 ### Step 4: Deduplicate & Store
 
+Skip if the URL matches any existing `seen_jobs.json` entry, regardless of
+that entry's key. This preserves dedup continuity for postings stored under legacy keys.
 Deduplicate by URL and by normalized company + title against both local state files. If
 an existing tracker row has status `drafted`, update the matching local context as
 appropriate but do not add a second row.
+
+Derive every new entry's key with the canonical helper, never by inventing a slug:
+
+```bash
+python3 tools/job_key.py --company "<company>" --title "<title>" --url "<url>"
+```
+
+The key is a pure function of the posting, with Unicode-safe identity and stable
+length caps. `python3 tools/job_key.py --audit` reports legacy keys and duplicate
+URLs without rewriting state. Preserve existing keys; jobs matched by URL or
+company+title must not be stored a second time.
 
 Add ALL fetched jobs to `seen_jobs.json` with this additive structure:
 
 ```json
 {
   "seen": {
-    "<url_or_company_title_key>": {
+    "<key from tools/job_key.py>": {
       "title": "...",
       "company": "...",
       "location": "...",
