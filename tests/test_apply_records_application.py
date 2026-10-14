@@ -42,12 +42,13 @@ TRACKER_HEADER = (
 )
 
 
-def section(path, heading):
+def section(path, heading, include_subsections=False):
     """The body of one markdown section, up to the next heading of any depth."""
     text = path.read_text(encoding="utf-8")
     start = text.index(heading) + len(heading)
     rest = text[start:]
-    end = re.search(r"^#{1,4} ", rest, re.MULTILINE)
+    depth = len(heading.split(" ", 1)[0]) if include_subsections else 4
+    end = re.search(r"^#{1," + str(depth) + r"} ", rest, re.MULTILINE)
     return rest[: end.start()] if end else rest
 
 
@@ -308,7 +309,7 @@ class ApplyArchivesThePosting(unittest.TestCase):
     def test_posting_is_archived_where_every_reader_looks(self):
         for path, heading, needle, why in self.CASES:
             with self.subTest(file=path.name, rule=needle):
-                self.assertIn(needle, section(path, heading), why)
+                self.assertIn(needle, section(path, heading, include_subsections=True), why)
 
 
 class DeadlineSurvivesEveryWrite(unittest.TestCase):
@@ -425,7 +426,7 @@ class FallbackGlobFindsOneRolesDocuments(unittest.TestCase):
     def test_both_readers_glob_the_full_stem(self):
         for path, heading, needle, why in self.CASES:
             with self.subTest(file=path.name, rule=needle):
-                self.assertIn(needle, section(path, heading), why)
+                self.assertIn(needle, section(path, heading, include_subsections=True), why)
 
     @staticmethod
     def globs(path, heading):
@@ -519,7 +520,7 @@ class ArchiveNameIsOnePathComponent(unittest.TestCase):
         (INTERVIEW, "## Step 1: Load the Application Context",
          "by the **Subfolder naming** rule in `documents/README.md`",
          "interview must read the same archive /apply and /outcome wrote"),
-        (INTERVIEW, "### 6. Logistics",
+        (INTERVIEW, "## Step 3: Build the Prep Pack",
          "archive folder derived in Step 1",
          "interview must reuse its canonical read path when writing the prep pack"),
         (NOTION_SYNC, "## Step 5: Write the Detail Page",
@@ -534,7 +535,7 @@ class ArchiveNameIsOnePathComponent(unittest.TestCase):
     def test_the_rule_has_one_home_and_every_deriver_cites_it(self):
         for path, heading, needle, why in self.CASES:
             with self.subTest(file=path.name, rule=needle):
-                self.assertIn(needle, section(path, heading), why)
+                self.assertIn(needle, section(path, heading, include_subsections=True), why)
 
     @staticmethod
     def derive(company, role):

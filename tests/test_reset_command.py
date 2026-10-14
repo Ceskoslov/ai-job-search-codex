@@ -204,11 +204,14 @@ class TestResetTargetsTheHeadingsTheShippedFilesHave(unittest.TestCase):
         for filename in ("01-candidate-profile.md", "02-behavioral-profile.md"):
             with self.subTest(file=filename):
                 shipped = (SKILL_DIR / filename).read_text(encoding="utf-8")
+                required = h2_headings(skeleton_block(self.reset, filename))
+                actual = h2_headings(shipped)
+                self.assertIn("preserve any additional `##` headings", self.reset)
                 self.assertEqual(
-                    h2_headings(skeleton_block(self.reset, filename)),
-                    h2_headings(shipped),
+                    required,
+                    [heading for heading in actual if heading in required],
                     f"/reset's skeleton for {filename} must carry exactly the shipped "
-                    "## headings, in order - a reset must not rename or drop sections",
+                    "## framework headings, in order - a reset must not rename or drop sections",
                 )
 
     def test_partial_anchors_exist_in_the_files_they_target(self):

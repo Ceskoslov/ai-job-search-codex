@@ -138,6 +138,10 @@ Wait for the user's response.
 
 ### Profile reset
 
+For full-file profile resets, preserve any additional `##` headings added by the
+user in their existing order, but clear their personal content. The skeleton below
+defines the required framework headings; it does not remove custom sections.
+
 **For `01-candidate-profile.md`**, replace the file content with:
 
 ```markdown
