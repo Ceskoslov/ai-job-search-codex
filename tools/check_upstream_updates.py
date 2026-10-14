@@ -117,7 +117,8 @@ def main() -> int:
     missing_upstream = []
 
     for rel_path in FRAMEWORK_FILES:
-        local_path = ROOT / rel_path
+        seed_path = ROOT / ".claude/profile-templates" / rel_path
+        local_path = seed_path if seed_path.is_file() else ROOT / rel_path
         if not local_path.exists():
             print(f"Local file missing: {rel_path}")
             continue

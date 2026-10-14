@@ -15,7 +15,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SKILL_DIR = ROOT / ".claude/skills/job-application-assistant"
-FRAMEWORK_FILES = sorted(SKILL_DIR.glob("*.md"))
+TEMPLATE_SKILL_DIR = ROOT / ".claude/profile-templates/.claude/skills/job-application-assistant"
+if TEMPLATE_SKILL_DIR.is_dir():
+    # Populated local instances are ignored; framework versioning belongs to seeds.
+    FRAMEWORK_FILES = sorted(TEMPLATE_SKILL_DIR.glob("*.md")) + [SKILL_DIR / "SKILL.md"]
+else:
+    FRAMEWORK_FILES = sorted(SKILL_DIR.glob("*.md"))
 
 # Add root AGENTS.md if it exists
 root_agents = ROOT / "AGENTS.md"

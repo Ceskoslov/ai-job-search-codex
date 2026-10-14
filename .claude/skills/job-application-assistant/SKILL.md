@@ -5,7 +5,7 @@ description: >
   and preparing for interviews. Triggers on keywords like: job posting, job application, CV,
   cover letter, resume, interview prep, job fit, career, application, apply, ansøgning, stilling
 allowed-tools: Read, Glob, Grep, WebFetch, WebSearch, Bash, Edit, Write, AskUserQuestion
-framework_version: 1.3.4
+framework_version: 1.3.5
 ---
 
 # Job Application Assistant
@@ -45,6 +45,7 @@ When the user provides a job posting (URL or text), follow this workflow:
 - This step exists here because `/scrape` Step 5 routes straight into this skill. Without it, that path writes two documents and records nothing.
 
 ### Step 4: Interview Preparation
+- For application-specific preparation, follow `.claude/commands/interview.md`, including its optional reusable-reference loading and practice-feedback steps. That command owns the reference workflow; do not duplicate its rules here.
 - Follow the framework in `07-interview-prep.md`
 - Prepare STAR-format answers for likely questions
 - Identify role-specific talking points

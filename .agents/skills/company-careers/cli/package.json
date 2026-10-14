@@ -1,0 +1,19 @@
+{
+  "name": "company-careers-cli",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Read-only CLI for verified employers' public ATS job boards",
+  "type": "module",
+  "main": "src/cli.ts",
+  "bin": {
+    "company-careers": "src/cli.ts"
+  },
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "start": "node src/cli.ts",
+    "test": "node --test --test-concurrency=1 tests/*.test.ts"
+  },
+  "dependencies": {}
+}

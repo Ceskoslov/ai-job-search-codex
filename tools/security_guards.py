@@ -42,6 +42,7 @@ ALLOWED_PERMISSIONS = {
     # A portal added by /add-portal needs its own entry here and in
     # .claude/settings.json - that review step is the point.
     "Bash(node .agents/skills/linkedin-search/cli/src/cli.ts:*)",
+    "Bash(node .agents/skills/company-careers/cli/src/cli.ts:*)",
     "Bash(python salary_lookup.py:*)",
     "Bash(python3 salary_lookup.py:*)",
     "Bash(python tools/rank_state.py:*)",
@@ -57,6 +58,18 @@ ALLOWED_PERMISSIONS = {
 
 # Personal-data ignore rules that must never disappear from .gitignore.
 REQUIRED_IGNORE_RULES = [
+    '/CLAUDE.md',
+    '/.claude/skills/job-application-assistant/01-candidate-profile.md',
+    '/.claude/skills/job-application-assistant/02-behavioral-profile.md',
+    '/.claude/skills/job-application-assistant/03-writing-style.md',
+    '/.claude/skills/job-application-assistant/04-job-evaluation.md',
+    '/.claude/skills/job-application-assistant/05-cv-templates.md',
+    '/.claude/skills/job-application-assistant/06-cover-letter-templates.md',
+    '/.claude/skills/job-application-assistant/07-interview-prep.md',
+    '/.claude/skills/job-scraper/search-queries.md',
+    '/cv/main_example.tex',
+    '/cover_letters/cover_example.tex',
+
     "salary_data.json",
     # Depth-independent: the job-scraper skill resolves `job_scraper/` relative
     # to its own directory, so the state file lands under .claude/skills/... and

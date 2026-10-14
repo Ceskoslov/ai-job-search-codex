@@ -2,7 +2,7 @@
   "name": "local-ai-job-search",
   "version": "1.0.0",
   "private": true,
-  "description": "Local, agent-portable job-search workspace with a Node.js LinkedIn CLI",
+  "description": "Local, agent-portable job-search workspace with LinkedIn and official-careers CLIs",
   "type": "module",
   "engines": {
     "node": ">=22.18"
@@ -10,9 +10,13 @@
   "scripts": {
     "jobs": "node .agents/skills/linkedin-search/cli/src/cli.ts",
     "jobs:help": "node .agents/skills/linkedin-search/cli/src/cli.ts --help",
+    "careers": "node .agents/skills/company-careers/cli/src/cli.ts",
+    "careers:help": "node .agents/skills/company-careers/cli/src/cli.ts --help",
     "test:linkedin": "node --test --test-concurrency=1 .agents/skills/linkedin-search/cli/tests/*.test.ts",
-    "test:python": "python3 -B -m unittest discover -s tests -t .",
-    "test": "npm run test:linkedin && npm run test:python"
+    "test:careers": "node --test --test-concurrency=1 .agents/skills/company-careers/cli/tests/*.test.ts",
+    "test:python": "python3 tools/init_profile.py && python3 -B -m unittest discover -s tests -t .",
+    "test": "npm run test:linkedin && npm run test:careers && npm run test:python",
+    "profile:init": "python3 tools/init_profile.py"
   },
   "dependencies": {}
 }

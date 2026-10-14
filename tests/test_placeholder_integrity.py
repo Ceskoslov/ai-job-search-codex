@@ -26,6 +26,13 @@ CI = REPO / ".github" / "workflows" / "ci.yml"
 EXAMPLE_CV = REPO / "cv" / "main_example.tex"
 PROFILE = REPO / ".claude" / "skills" / "job-application-assistant" / "01-candidate-profile.md"
 
+# Personal instances are ignored; the committed seeds must retain blank sentinels.
+TEMPLATES = REPO / ".claude" / "profile-templates"
+if TEMPLATES.is_dir():
+    EXAMPLE_CV = TEMPLATES / EXAMPLE_CV.relative_to(REPO)
+    PROFILE = TEMPLATES / PROFILE.relative_to(REPO)
+
+
 # The literal sentinel strings (unescaped) that ci.yml's grep patterns match.
 CV_SENTINELS = ["\\name{[First]}{[Last]}", "\\email{[your.email@example.com]}"]
 PROFILE_SENTINEL = "[YOUR_EMAIL]"

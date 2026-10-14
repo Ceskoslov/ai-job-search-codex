@@ -1,6 +1,6 @@
 # 本地安装与配置
 
-本说明适用于当前的 Node / Codex / LinkedIn 精简版。
+本说明适用于当前的 Node / Codex / LinkedIn + Official Careers 版本。
 
 ## 1. 本机环境
 
@@ -13,7 +13,7 @@ python3 --version
 codex --version
 ```
 
-最低要求是 Node.js 22.18+ 和 Python 3.10+。LinkedIn CLI 没有第三方依赖，
+最低要求是 Node.js 22.18+ 和 Python 3.10+。两个搜索 CLI 都没有第三方依赖，
 因此无需 `npm install`，也无需 Bun。
 
 如果缺少 Node，Ubuntu/WSL 推荐通过你信任的 Node 版本管理器安装当前 LTS。
@@ -27,20 +27,24 @@ Codex 的安装和登录按 OpenAI 官方文档完成；Claude Code 或其他代
 gh repo fork MadsLorentzen/ai-job-search --clone
 ```
 
-注意：public 项目的 GitHub fork 是 public；初始化会把 personal data 写进受跟踪的
-模板文件。个人资料不应推送到公开 fork，请按 [section 8](#8-私有远程仓库建议)
-使用私有远程仓库。
+注意：public 项目的 GitHub fork 是 public；personal data 的工作实例已 gitignore，
+不随提交上传；
+通用模板保存在 `.claude/profile-templates/`，用 `npm run profile:init` 初始化缺失文件。私有远程配置见 [section 8](#8-私有远程仓库建议)。
 
 ## 3. 验证本地副本
 
 ```bash
 cd /home/cesko/projects/ai-job-search
+npm run profile:init
 npm test
 npm run jobs:help
+npm run careers:help
 npm run jobs -- search -q "software engineer" -l "Tokyo, Japan" --dry-run
+npm run careers -- search --group target -q "AI Engineer" -l "Tokyo, Japan" --dry-run
 ```
 
-最后一条只构造 URL，不访问 LinkedIn。
+最后两条只构造请求计划，不访问外部网站。公司官网命令需要 `target` 组已有雇主；
+初始为空时会安全失败并提示配置注册表。
 
 ## 4. 可选的 PDF 工具
 
@@ -51,15 +55,28 @@ sudo apt update
 sudo apt install texlive-luatex texlive-xetex texlive-latex-extra texlive-fonts-extra
 ```
 
+本机也可使用仓库内的 TeX Live（当前安装在 `.texlive/`，不会写入系统目录）。申请
+工作流会通过 `tools/run_tex.sh` 自动优先复用它，无需每次导出 PATH，也不要为每份
+申请在 `/tmp` 重装后删除：
+
+```bash
+tools/run_tex.sh lualatex --version
+tools/run_tex.sh xelatex --version
+```
+
+`AI_JOB_SEARCH_TEX_BIN=/path/to/texlive/bin/<platform>` 可显式覆盖工具目录；若仓库内
+没有 `.texlive/`，包装器会回退到 PATH 上已有的引擎。它不会自动联网安装依赖。
+
 ATS 文本层检查可任选一个：
 
 ```bash
-python3 -m pip install --user pypdf
+uv venv .venv
+uv pip install --python .venv/bin/python pypdf
 # 或
 sudo apt install poppler-utils
 ```
 
-这些安装会写入系统或用户环境，未安装时搜索、档案整理和纯文本草稿仍可使用。
+未安装这些可选工具时，搜索、档案整理和纯文本草稿仍可使用。
 
 ## 5. 初始化候选人资料
 
@@ -108,7 +125,11 @@ codex
 使用 $job-search-workflow，评估下面这份 LinkedIn 职位正文；不要投递，只生成本地草稿。
 ```
 
-直接调用 LinkedIn CLI 的命令见 [README.md](README.md#linkedin-cli)。
+直接调用两个搜索 CLI 的命令见 [README.md](README.md#搜索-cli)。
+
+公司官网雇主注册表在 `.agents/skills/company-careers/data/companies.json`。只登记已
+核验的企业官方招聘页，并保持 `employer_type: "direct"`；猎头、人才中介、RPO 和
+匿名客户页面不得加入 `target` 组。
 
 ## 7. 外部操作规则
 
@@ -150,7 +171,15 @@ git push -u origin codex-node-linkedin
 
 ## 9. 后续添加其他网站
 
-新增站点时，通过自然语言让代理遵循 `.claude/commands/add-portal.md`，以
-`.agents/skills/linkedin-search/` 为模板，使用 Node 原生运行时并先实现 dry-run、
-解析和离线测试。公司官网投递适配器必须把“搜索/解析”和“提交/上传”拆开，提交端
+新增独立站点时，通过自然语言让代理遵循 `.claude/commands/add-portal.md`；常见
+ATS 优先扩展 `.agents/skills/company-careers/`，其他站点以 `linkedin-search` 为
+模板。使用 Node 原生运行时并先实现 dry-run、解析和离线测试。公司官网投递适配器
+必须把“搜索/解析”和“提交/上传”拆开，提交端
 默认关闭，并设置明确的逐次确认。
+
+## 本地个人档案
+
+候选人资料及搜索偏好使用被忽略的本地实例。`npm run profile:init` 只复制
+缺失文件，不覆盖已填写资料。通用模板在 `.claude/profile-templates/`，
+禁止把个人信息填进这个版本化目录。换机时先初始化工作区，再从自己的备份
+恢复个人实例；Git 远程只保存功能和空白模板。

@@ -3,6 +3,7 @@
     "allow": [
       "Skill(job-application-assistant)",
       "Bash(node .agents/skills/linkedin-search/cli/src/cli.ts:*)",
+      "Bash(node .agents/skills/company-careers/cli/src/cli.ts:*)",
       "Bash(python salary_lookup.py:*)",
       "Bash(python3 salary_lookup.py:*)",
       "Bash(python tools/rank_state.py:*)",

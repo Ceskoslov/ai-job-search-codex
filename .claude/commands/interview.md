@@ -33,6 +33,10 @@ v1 preps for a **specific application**. Generic no-target practice is out of sc
    - `.claude/skills/job-application-assistant/02-behavioral-profile.md`
    - `.claude/skills/job-application-assistant/04-job-evaluation.md`
 
+5. **Reusable interview references (optional local assets):** if `documents/interview/README.md` exists, read its index and the referenced lessons relevant to the interview language and role. These are coaching inputs, not candidate-profile evidence. Preserve each asset's evidence labels: employer feedback reported in a review is not independently verified feedback; recruiter advice, candidate self-report, AI observations, and causal hypotheses are distinct. Follow source pointers when a detail matters; do not merge different interviews or infer missing companies, dates, or outcomes. If the index is absent, proceed with the existing context.
+   - For Japanese interviews, use the indexed Japanese expression patterns, answer structures, and practice priorities. Pick up to three applicable priorities for this stage.
+   - Check factual sample answers against `01-candidate-profile.md` and the submitted documents. Mark unresolved metrics, ownership, deployment scope, motivations, and preferences as **needs candidate confirmation**; use placeholders or omit them from speakable answers. Importing an AI review alone does not confirm a new profile fact or authorize a tracker status change.
+
 ---
 
 ## Step 2: Research the Company (Interview-Focused)
@@ -78,6 +82,10 @@ Pick 4-6 from `07`'s categories, customized to the research and the stage: role 
 ### 6. Logistics
 The phone/video tips from `07` when the format calls for them, plus date and interviewer names as a header.
 
+### 7. Practice priorities from past reviews (when references exist)
+
+Include up to three priorities selected in Step 1, their source asset and evidence label, a short drill for each, and any factual confirmations needed before using the answers. For Japanese interviews, check early conclusions, personal versus team scope, actual versus proposed work, concise answers, and polite correction of misunderstandings. Timing targets from a review are practice guides; allow longer answers when the interviewer requests depth.
+
 Save the pack in the archive folder derived in Step 1 as `interview_prep_<stage>.md` (create the folder if this application predates `/outcome`). The folder is gitignored, so the pack stays personal; one file per stage, so earlier packs remain as history. Present the pack in chat as well - the file is the artifact, the conversation is the delivery.
 
 ---
@@ -87,6 +95,8 @@ Save the pack in the archive folder derived in Step 1 as `interview_prep_<stage>
 Ask if the user wants to practice. If yes, run the roleplay **in this conversation** following the Roleplay Guidelines in `07-interview-prep.md` exactly: warm-up first, then role-specific technical questions, 1-2 behavioral questions tied to the posting's competencies, and one tough question or curveball. After each answer, give brief feedback - what worked, what to sharpen, and which STAR example from the pack would have served better.
 
 Calibrate feedback against `02-behavioral-profile.md`: coach toward the user's natural register, not a generic ideal - the same voice-consistency rule the `/apply` reviewer applies to cover letters.
+
+When Step 3 selected priorities from past reviews, use them in mock-interview feedback and record observable performance for each (for example, when the conclusion appeared, whether ownership was clear, and whether a misunderstanding was corrected). Do not interpret practice scores as hiring probabilities.
 
 ---
 

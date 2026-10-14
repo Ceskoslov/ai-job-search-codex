@@ -22,6 +22,14 @@ SKILL_DIR = REPO / ".claude" / "skills" / "job-application-assistant"
 CV_TEMPLATES = SKILL_DIR / "05-cv-templates.md"
 COVER_TEMPLATES = SKILL_DIR / "06-cover-letter-templates.md"
 
+# Validate blank versioned seeds, never require a populated local instance to
+# turn back into a placeholder template.
+TEMPLATE_DIR = REPO / ".claude" / "profile-templates"
+if TEMPLATE_DIR.is_dir():
+    CV_TEMPLATES = TEMPLATE_DIR / CV_TEMPLATES.relative_to(REPO)
+    COVER_TEMPLATES = TEMPLATE_DIR / COVER_TEMPLATES.relative_to(REPO)
+
+
 
 def _sections(text: str) -> dict[str, str]:
     """Split a command spec into {heading: body} by '## ' headers."""

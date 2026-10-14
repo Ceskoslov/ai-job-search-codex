@@ -21,15 +21,26 @@ Use the repository root as the working directory. Read `AGENTS.md` first, then r
 
 Treat Claude-specific tool names in those files as capability names: map file reads and edits, web access, questions, and reviewer agents to the tools available in the current host. Treat `$ARGUMENTS` as the user's text following the requested operation. A slash command is an alias for intent, not a requirement of the host UI.
 
+Run `npm run profile:init` if profile files are missing. It creates only missing
+local instances from `.claude/profile-templates/` and never overwrites existing
+profiles. These instances are gitignored; reusable template changes belong in the
+versioned seeds, which must remain free of candidate data.
+
 The candidate sources are `CLAUDE.md`, `.claude/skills/job-application-assistant/01-candidate-profile.md`, and `cv/main_example.tex`. Do not invent facts. When a confirmed new fact is used, update the candidate profile as required by the canonical workflow.
 
-LinkedIn is the only installed portal CLI. Use Node.js:
+Two read-only portal CLIs are installed. Use Node.js:
 
 ```bash
+# LinkedIn public listings
 npm run jobs -- search -q "<role>" -l "<location>" --jobage 14 --limit 20 --format json
 npm run jobs -- detail <id-or-url> --format plain
+
+# Verified employers' official ATS boards
+npm run careers -- companies --format table
+npm run careers -- search --group target -q "<role>" -l "<location>" --jobage 14 --limit 50 --format json
+npm run careers -- detail <id-or-url> --company <registered-id> --format plain
 ```
 
-Use `--dry-run` during configuration or tests; it validates and prints the request URL without contacting LinkedIn. Live search is personal-use only and should be low volume.
+Use `--dry-run` during configuration or tests; it validates and prints the request plan without contacting a portal. LinkedIn live search is personal-use only and should be low volume. Official-careers search is limited to direct employers in `.agents/skills/company-careers/data/companies.json`.
 
 Before any application submission, message or email send, document upload, external sync, or paid API use, present the exact target and artifacts and obtain explicit authorization. Drafting and local record updates do not authorize those external actions.

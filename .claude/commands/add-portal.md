@@ -1,7 +1,8 @@
 # /add-portal - Add a job-site adapter
 
-Use this workflow only when the user explicitly asks to add another job board or company
-career site. The current installation intentionally contains LinkedIn only.
+Use this workflow only when the user explicitly asks to add another job board, ATS
+provider, or company career site. The current installation contains LinkedIn plus a
+verified-employer adapter for Greenhouse, Lever, Ashby, Workday, and SmartRecruiters.
 
 ## 1. Establish scope and risk
 
@@ -14,9 +15,12 @@ Live reconnaissance is external access. A request to *build* an adapter does not
 itself authorize submitting applications, sending messages, uploading documents, or
 incurring charges.
 
-## 2. Use the Node-native reference
+## 2. Choose the Node-native reference
 
-Read `.agents/skills/linkedin-search/` completely. Create:
+For another employer on an already supported ATS, validate and add a registry entry under
+`.agents/skills/company-careers/data/companies.json`; do not create a duplicate skill. For
+a new ATS family, extend that skill's provider layer and fixtures. For a distinct job
+site, read `.agents/skills/linkedin-search/` completely and create:
 
 ```text
 .agents/skills/<name>/

@@ -26,7 +26,10 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SCRAPER_SKILL = REPO_ROOT / ".claude" / "skills" / "job-scraper" / "SKILL.md"
-PORTAL_CLIS = sorted((REPO_ROOT / ".agents" / "skills").glob("*-search"))
+PORTAL_CLIS = sorted(
+    path.parent.parent.parent.parent
+    for path in (REPO_ROOT / ".agents" / "skills").glob("*/cli/src/commands/search.ts")
+)
 
 # Derived, never copied: a hardcoded field list drifts in lockstep with
 # nothing - if Step 2's prose drops or adds a field, the known-good portals
@@ -150,6 +153,36 @@ class SeenJobsDedupContinuityTests(unittest.TestCase):
     def test_step4_presentation_mentions_url_deduplication(self):
         text = SCRAPER_SKILL.read_text(encoding="utf-8")
         self.assertRegex(text, r"matched by URL or\s+company\+title")
+
+class DirectEmployerGateTests(unittest.TestCase):
+    """The shortlist must never drift back to recruiter or anonymous-client posts."""
+
+    def test_direct_employer_gate_is_hard_and_auditable(self):
+        text = SCRAPER_SKILL.read_text(encoding="utf-8")
+        self.assertIn("Direct-employer gate (hard filter)", text)
+        self.assertIn("Only keep postings published directly", text)
+        self.assertIn('skip_reason: "intermediary_or_unverified_employer"', text)
+        self.assertIn("do not fetch or follow any", text)
+
+    def test_intermediaries_are_omitted_from_the_shortlist(self):
+        text = SCRAPER_SKILL.read_text(encoding="utf-8")
+        self.assertIn("Present only new direct-employer jobs", text)
+        self.assertIn("filtered out", text)
+
+
+class DirectEmployerGateTests(unittest.TestCase):
+    """The local shortlist must never mix direct employers with agency leads."""
+
+    def test_direct_employer_gate_is_hard_and_precedes_detail_fetch(self):
+        text = SCRAPER_SKILL.read_text(encoding="utf-8")
+        self.assertIn("Direct-employer gate (hard filter)", text)
+        self.assertIn("Apply the\ndirect-employer gate before fetching details", text)
+
+    def test_intermediary_skip_reason_is_persisted(self):
+        text = SCRAPER_SKILL.read_text(encoding="utf-8")
+        stored = derive_stored_fields()
+        self.assertIn("skip_reason", stored)
+        self.assertIn('intermediary_or_unverified_employer', text)
 
 
 if __name__ == "__main__":

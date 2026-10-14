@@ -11,7 +11,7 @@
 % Package Imports
 \usepackage[hmargin=2.3cm, vmargin=2.3cm]{geometry}
 \usepackage[hidelinks]{hyperref}
-\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage[dvipsnames]{xcolor}
 \usepackage{titlesec}
 \usepackage[absolute]{textpos}
 \usepackage{fontspec,xltxtra,xunicode}

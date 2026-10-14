@@ -10,24 +10,19 @@ There are three paths into setup. Step 0 picks the right one; all three converge
 
 If `$ARGUMENTS` contains `--section <name>`, skip directly to that section in Path C for an update-only flow. Do not run the path-selection prompt below.
 
-Otherwise, first check where this working copy would publish to — **before anything is
-written, not after** (the Step 4 privacy note fires only once every file is already on
-disk, which is too late to inform the decision). Run `git remote get-url origin`; if the
-command fails (no remote, or not a git checkout), skip this check silently. If there is
-a GitHub `origin`, check it with `gh repo view <owner/repo> --json visibility,isFork`
-when `gh` is available. If the origin is a **public fork** of the template — or its
-visibility cannot be determined — warn now and wait:
+First run `python3 tools/init_profile.py` to create missing local profile instances.
+It never overwrites an existing file. Candidate data belongs only in these ignored
+instances, never in `.claude/profile-templates/`, which holds the versioned blank seeds.
 
-> **Heads-up before we start:** your `origin` points at `<owner/repo>`, which is a
-> public GitHub fork. This setup writes your personal data (name, contact details,
-> employment history, salary expectations) into **tracked** files, and anything you
-> commit *and push* to that fork is visible to anyone. Two safe options: keep your
-> profile commits local and never push them, or push to a **private** repository
-> instead — SETUP.md section 8 has the two-minute private-remote recipe. Want to
-> continue with the setup?
-
-Wait for the user's confirmation before showing the path prompt. A private origin, no
-origin, or a non-fork remote needs no warning — continue silently.
+Check `git remote get-url origin` before generating candidate data. Also check
+`git ls-files -- CLAUDE.md .claude/skills/job-application-assistant/0[1-7]-*.md .claude/skills/job-scraper/search-queries.md cv/main_example.tex cover_letters/cover_example.tex`.
+If no profile instances are tracked, proceed silently: normal commits and pushes do
+not include these files. If some are still tracked (an older checkout or a force-add),
+check origin visibility with `gh repo view <owner/repo> --json visibility,isFork` when
+available. For a public origin or unknown visibility, explain which personal paths
+are tracked and wait for confirmation before populating them. Recommend removing
+them from the index and adding ignore rules, or using a private remote (SETUP.md
+section 8). A private origin or no origin needs no public-visibility warning.
 
 Then, before greeting the user, scan the `documents/` folder. Use Glob with `documents/**/*` and count files per subfolder (`cv/`, `linkedin/`, `diplomas/`, `references/`, `projects/`, `applications/`).
 
@@ -336,9 +331,9 @@ This section generates the search queries that power `/scrape`. Use the informat
 Ask about:
 - **Role titles to search for:** Job titles for the same underlying work vary a lot across companies and markets - a "Data Scientist" role at one employer may be called "Insights Analyst" or "Data Consultant" at another. Ask about the function first: "What kind of work do you actually want to be doing day-to-day?" Then translate that into concrete search terms: "Given that, what job titles should I search for? For example: Data Scientist, ML Engineer, Geophysicist." Collect 3-8 specific titles, but keep the underlying function in mind - it feeds the category naming in `search-queries.md` and the Experience Match dimension in `04-job-evaluation.md`.
 - **Key skills as search terms:** "Which of your skills are most likely to appear in job postings?" Pick 3-5 that are distinctive and searchable.
-- **Target companies (optional):** "Are there specific companies you'd like to monitor for openings?"
+- **Target companies (optional):** "Are there specific companies you'd like to monitor for openings?" Record the names, but do not guess ATS tenants. Register an official board in `company-careers` only after its link has been verified from the employer's corporate domain.
 - **Geographic scope:** "Which cities or regions should I search in? How far are you willing to commute?" Use this to define the location filter tiers (ideal, acceptable, borderline, too far).
-- **Job source:** "This local edition includes LinkedIn only. Which locations, role terms, and work modes should it search?" Keep other job boards disabled because they are not installed. If the user later requests another board or a company career-site adapter, route to `/add-portal`; do not add or contact a site during setup.
+- **Job source:** "This local edition includes LinkedIn plus a verified official-company source. Should searches use LinkedIn, company websites, or both?" Record LinkedIn as the default unless the user chooses otherwise. Official searches use only the registered `company-careers` target group. If a requested employer is not registered, record it for later verification; do not contact or auto-register a site during setup. Route a new ATS provider or distinct job board to `/add-portal`.
 - **CV language:** "Should your CVs be written in English (the default, accepted in most markets), or in your market's language?" Record the answer as a `CV language: <language>` line in CLAUDE.md's Identity section. Cover letters always match each posting's language automatically; this setting governs the CV only. If the user is unsure, keep English and note they can re-run `/setup --section search` to change it.
 
 **Important:** Also suggest role types the user may not have considered, based on their skill profile. For example:
@@ -413,10 +408,9 @@ Present a summary:
 > - `cv/main_example.tex` - Your LaTeX CV template
 > - `.claude/skills/job-scraper/search-queries.md` - Job search queries for `/scrape`
 >
-> **Privacy note:** the files above now contain your personal data and are *tracked by git*.
-> A GitHub fork of the template is always public (forks of public repos cannot be made
-> private), so do not push these commits to a fork. Keep them local, or push to a private
-> repository instead - see SETUP.md section 8 for the private-remote setup.
+> **Privacy note:** these personal instances are gitignored and stay local. Do not
+> force-add them or put candidate information in `.claude/profile-templates/`.
+> Back them up separately; a fresh clone contains only blank versioned seeds.
 >
 > **Try it out:**
 > - Run `/scrape` to search for matching jobs right now

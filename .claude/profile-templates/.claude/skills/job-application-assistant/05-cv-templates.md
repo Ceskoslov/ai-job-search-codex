@@ -11,14 +11,16 @@ framework_version: 1.4.5
 All CVs use the moderncv LaTeX package with the "banking" style and "blue" color scheme.
 
 **Output file:** `cv/main_<company>_<role>.tex`
-**Compile with:** **lualatex** on MiKTeX/TeX Live. pdflatex often fails on modern MiKTeX installs with `fontawesome5` font-expansion errors; lualatex handles the same sources cleanly.
+**Compile with:** **lualatex** on MiKTeX/TeX Live. pdflatex often fails on modern MiKTeX installs with Font Awesome icon-font expansion errors; lualatex handles the same sources cleanly. moderncv 2.6+ requires the `fontawesome6` package, while older moderncv releases may still require `fontawesome5`; install the package required by the active moderncv version rather than assuming one name.
 **Master reference:** `cv/main_example.tex` (comprehensive CV with all competencies, experience, and achievements - use as source when building targeted CVs)
 
 ### Compile command
 
 ```bash
-cd cv && lualatex -interaction=nonstopmode main_<company>_<role>.tex
+cd cv && ../tools/run_tex.sh lualatex -interaction=nonstopmode main_<company>_<role>.tex
 ```
+
+The wrapper prefers the persistent repository-local `.texlive/` installation, then falls back to `lualatex` on `PATH`. Do not download a temporary TeX distribution for each draft.
 
 Expected output: `Output written on main_<company>_<role>.pdf (2 pages, ...)`. Any page count other than 2 is a failure that must be fixed before presenting to the user.
 
@@ -123,7 +125,7 @@ Two related patterns are fine and should be kept:
 
 ### Section headings must match the CV's language (important)
 
-Section headings such as `\section{Core Competencies}`, `Professional Experience`, `Education`, `Languages`, `Publications`, `Honors and Awards`, `References` (and any others your template defines), plus the `Available upon request.` line under References, are all **literal English text baked into the template** - they do not translate themselves. Whenever the CV language (see `CV language` in the candidate profile) is not English, translate every one of these too, whatever they are, not just the body prose - a CV with a fully localized profile statement and bullets sitting under untouched English section headers reads as sloppy and inconsistent, and it's an easy thing to forget precisely because the prose translation is the obvious, visible part of the job. Worked example for Spanish: `Competencias Clave`, `Experiencia Profesional`, `Educaci\'on`, `Idiomas`, `Publicaciones`, `Distinciones y Premios`, `Referencias`, `Disponibles a solicitud.` The same rule applies for any other target language - check this explicitly during the verification pass.
+Translate retained section headings and narrative text into the requested CV language. First apply `01-candidate-profile.md` → **Document Preferences**: if a section is omitted, remove its heading and boilerplate instead of translating them. Localized headings do not require translating the publication titles, qualifications or technical terms inside them; use `03-writing-style.md` → **Japanese terminology and candidate preferences** for those. Verify these separately during the final pass.
 
 ## Section-by-Section Tailoring
 
@@ -214,9 +216,9 @@ Wherever the CV names a verifiable artifact - a public project, a hackathon entr
 - Keep format brief, one line each
 
 ### References
-- List 2-4 references with name, title, company, and contact
-- End with: "More references are available upon request."
-- **Do not attach reference letters** - employers typically contact references directly
+- Apply the candidate's **Document Preferences** in `01-candidate-profile.md` before copying this optional section or the sample section order below.
+- If retained, include only actual references present in the candidate sources, or the configured availability boilerplate. Never invent people or contact details.
+- Do not attach reference letters unless requested.
 
 ### LaTeX Special Characters (important)
 
@@ -243,7 +245,7 @@ Related trap: a bullet whose text begins with a literal `[` must be braced - `\i
 
 After writing the CV and before presenting to the user, always compile and visually inspect the PDF. Iterate until the layout is clean. Workflow:
 
-1. Run `lualatex -interaction=nonstopmode main_<company>_<role>.tex`
+1. Run `../tools/run_tex.sh lualatex -interaction=nonstopmode main_<company>_<role>.tex` from `cv/`
 2. Check the output page count: must be exactly 2
 3. Read the PDF via the Read tool and visually inspect both pages
 4. Check for **orphaned entries**: a `\cventry` title line must never sit alone at the bottom of page 1 with its bullets on page 2
@@ -277,7 +279,7 @@ Most employers run CVs through an ATS before a human sees them, and the ATS read
 python tools/verify_pdf.py cv/main_<company>_<role>.pdf --dump-text cv/main_<company>_<role>.txt
 ```
 
-Extraction tries **pypdf** first (`pip install pypdf`, BSD license), then Poppler `pdftotext`. If a fallback still uses `pdftotext -layout`, it must also pass `-enc UTF-8`: Xpdf-based builds default to Latin-1, which makes every non-ASCII character in a perfectly good CV read back as a replacement character. If neither extractor is available, skip the mechanical check with a warning and rely on the visual PDF read for keyword coverage.
+Extraction tries **pypdf** first (`uv pip install --python .venv/bin/python pypdf`, BSD license), then Poppler `pdftotext`. If a fallback still uses `pdftotext -layout`, it must also pass `-enc UTF-8`: Xpdf-based builds default to Latin-1, which makes every non-ASCII character in a perfectly good CV read back as a replacement character. If neither extractor is available, skip the mechanical check with a warning and rely on the visual PDF read for keyword coverage.
 
 What to check in the extraction:
 

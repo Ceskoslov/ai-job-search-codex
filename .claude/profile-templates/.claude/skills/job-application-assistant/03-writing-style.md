@@ -105,6 +105,12 @@ The cover letter is **not a CV repetition**. It should be forward-looking:
 - Frame advanced degrees as evidence of independent project delivery
 
 ## Multi-language Applications
-- Default to the language of the job posting
+- Follow the configured CV language and the posting language for cover letters; an explicit request for language variants overrides these defaults for that task.
 - Cover letters in the posting's language should feel natural, not translated
 - Slightly warmer, more personal tone may be acceptable in some languages
+
+### Japanese terminology and candidate preferences
+- Read `01-candidate-profile.md` → **Document Preferences** before drafting or translating Japanese materials. Apply its section omissions to the generated document, not to stored candidate evidence.
+- Translate narrative prose and retained headings, not proper names by reflex. Copy publication titles, product/API/framework/protocol names, certifications and precise academic or technical terms from the canonical candidate sources. If a Japanese equivalent is uncertain or broadens/narrows the meaning, retain the English original; optionally add a concise Japanese explanation at first use. Do not invent an official localized degree, award or job title.
+- Preserve distinctions such as `hybrid retrieval` vs. `hybrid search`, `retrieval accuracy` vs. `answer accuracy`, and `learnable multi-layer feature fusion` vs. generic feature aggregation. Do not silently turn a PoC into production operations when translating.
+- During final review, compare terminology, publication titles, dates, metrics and ownership across language variants against the same canonical source. Recompile edited variants, check text extraction and visual layout, and refresh any existing same-language aliases and the application index.

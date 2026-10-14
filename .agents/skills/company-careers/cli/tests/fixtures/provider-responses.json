@@ -1,0 +1,69 @@
+{
+  "greenhouse": {
+    "jobs": [
+      {
+        "id": 101,
+        "title": "AI Engineer",
+        "company_name": "Acme Greenhouse",
+        "first_published": "2026-09-01T01:00:00Z",
+        "absolute_url": "https://greenhouse.example/jobs/101",
+        "location": {"name": "Tokyo, Japan"},
+        "content": "<p>Build RAG systems &amp; AI agents.</p>",
+        "departments": [{"name": "Engineering"}]
+      }
+    ]
+  },
+  "lever": [
+    {
+      "id": "lever-101",
+      "text": "Machine Learning Engineer",
+      "createdAt": 1788224400000,
+      "hostedUrl": "https://jobs.lever.co/acmelever/lever-101",
+      "descriptionPlain": "Build machine learning services.",
+      "workplaceType": "hybrid",
+      "categories": {"location": "Tokyo, Japan", "department": "AI", "commitment": "Full-time"}
+    }
+  ],
+  "ashby": {
+    "jobs": [
+      {
+        "id": "ashby-101",
+        "title": "Applied AI Engineer",
+        "publishedAt": "2026-09-02T00:00:00Z",
+        "jobUrl": "https://jobs.ashbyhq.com/acmeashby/ashby-101",
+        "location": "Tokyo, Japan",
+        "descriptionPlain": "Develop AI applications.",
+        "department": "Engineering",
+        "employmentType": "FullTime",
+        "isRemote": false
+      }
+    ]
+  },
+  "smartrecruiters": {
+    "totalFound": 1,
+    "content": [
+      {
+        "id": "smart-101",
+        "name": "Generative AI Engineer",
+        "releasedDate": "2026-09-03T00:00:00Z",
+        "ref": "https://jobs.smartrecruiters.com/AcmeSmart/smart-101",
+        "company": {"name": "Acme Smart"},
+        "location": {"city": "Tokyo", "country": "Japan"},
+        "department": {"label": "Engineering"},
+        "typeOfEmployment": {"label": "Full-time"}
+      }
+    ]
+  },
+  "workday": {
+    "total": 1,
+    "jobPostings": [
+      {
+        "title": "LLM Engineer",
+        "locationsText": "Tokyo, Japan",
+        "postedOn": "Posted 2 Days Ago",
+        "externalPath": "/job/Tokyo/LLM-Engineer_R101",
+        "bulletFields": ["R101"]
+      }
+    ]
+  }
+}

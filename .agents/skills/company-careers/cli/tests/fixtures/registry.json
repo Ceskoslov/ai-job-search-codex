@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "groups": {
+    "target": ["acme-greenhouse", "acme-lever", "acme-ashby", "acme-workday", "acme-smart"],
+    "blocked": ["agency"]
+  },
+  "companies": [
+    {
+      "id": "acme-greenhouse",
+      "name": "Acme Greenhouse",
+      "aliases": ["Acme GH"],
+      "career_url": "https://greenhouse.example/careers",
+      "corporate_domains": ["greenhouse.example"],
+      "provider": "greenhouse",
+      "board_token": "acmegh",
+      "employer_type": "direct",
+      "enabled": true,
+      "groups": ["target"]
+    },
+    {
+      "id": "acme-lever",
+      "name": "Acme Lever",
+      "career_url": "https://lever.example/careers",
+      "corporate_domains": ["lever.example"],
+      "provider": "lever",
+      "board_token": "acmelever",
+      "employer_type": "direct",
+      "enabled": true,
+      "groups": ["target"]
+    },
+    {
+      "id": "acme-ashby",
+      "name": "Acme Ashby",
+      "career_url": "https://ashby.example/careers",
+      "corporate_domains": ["ashby.example"],
+      "provider": "ashby",
+      "board_token": "acmeashby",
+      "employer_type": "direct",
+      "enabled": true,
+      "groups": ["target"]
+    },
+    {
+      "id": "acme-workday",
+      "name": "Acme Workday",
+      "career_url": "https://workday.example/careers",
+      "corporate_domains": ["workday.example"],
+      "provider": "workday",
+      "board_url": "https://acme.wd5.myworkdayjobs.com/en-US/External",
+      "employer_type": "direct",
+      "enabled": true,
+      "groups": ["target"]
+    },
+    {
+      "id": "acme-smart",
+      "name": "Acme Smart",
+      "career_url": "https://smart.example/careers",
+      "corporate_domains": ["smart.example"],
+      "provider": "smartrecruiters",
+      "board_token": "AcmeSmart",
+      "employer_type": "direct",
+      "enabled": true,
+      "groups": ["target"]
+    },
+    {
+      "id": "agency",
+      "name": "Example Staffing",
+      "career_url": "https://agency.example/jobs",
+      "corporate_domains": ["agency.example"],
+      "provider": "greenhouse",
+      "board_token": "agency",
+      "employer_type": "staffing",
+      "enabled": true,
+      "groups": ["blocked"]
+    }
+  ]
+}

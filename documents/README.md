@@ -193,6 +193,12 @@ Application folders may also contain **`interview_prep_<stage>.md`** files writt
 
 ## File Format Notes
 
+### Reusable interview reviews
+
+`interview/README.md` is an optional personal index for imported reviews and reusable coaching notes. `/interview` reads this index and relevant assets during context loading, applies their evidence labels, and incorporates selected priorities into preparation and mock-interview feedback. Personal files in `interview/` are gitignored. Preserve original reviews and keep derived lessons separate; references do not establish new candidate facts or application outcomes. `/setup` does not ingest these coaching assets as candidate evidence.
+
+An imported personal review may remain at its original path if that path is explicitly gitignored and linked from the index. Keep actual application feedback in the corresponding application's `outcome.md` when the company, role, stage and outcome are known.
+
 | Format | Readable by `/setup` | Notes |
 |--------|--------------------------|-------|
 | `.pdf` | Yes | Parsed directly with the Read tool |

@@ -7,6 +7,7 @@ __pycache__/
 *.pyo
 .venv/
 venv/
+.texlive/
 
 # Compiled documents
 *.pdf
@@ -74,6 +75,9 @@ documents/linkedin/**
 documents/diplomas/**
 documents/references/**
 documents/projects/**
+
+# Imported personal interview review retained at its original path.
+documents/interview_failure_review.md
 # Also where /interview saves its prep packs (interview_prep_<stage>.md): these
 # name the employers applied to, quote what was submitted, and set out the
 # candidate's weak points.
@@ -117,3 +121,16 @@ company_research/*.json
 
 # Brainstorm mockups (superpowers visual companion) - never ship
 .superpowers/
+
+# Instantiated personal workspace; clean seeds live in .claude/profile-templates/.
+/CLAUDE.md
+/.claude/skills/job-application-assistant/01-candidate-profile.md
+/.claude/skills/job-application-assistant/02-behavioral-profile.md
+/.claude/skills/job-application-assistant/03-writing-style.md
+/.claude/skills/job-application-assistant/04-job-evaluation.md
+/.claude/skills/job-application-assistant/05-cv-templates.md
+/.claude/skills/job-application-assistant/06-cover-letter-templates.md
+/.claude/skills/job-application-assistant/07-interview-prep.md
+/.claude/skills/job-scraper/search-queries.md
+/cv/main_example.tex
+/cover_letters/cover_example.tex

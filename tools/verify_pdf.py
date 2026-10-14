@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Verify that a generated PDF has the expected pages and extractable text.
 
-Text-layer extraction tries pypdf (BSD, optional `pip install pypdf`) first,
+Text-layer extraction tries pypdf (BSD, optional `uv pip install --python .venv/bin/python pypdf`) first,
 then Poppler `pdftotext` if pypdf is missing, raises, or returns zero
 extractable characters. Poppler remains the fallback.
 
@@ -41,7 +41,7 @@ def run_tool(command):
     except FileNotFoundError as exc:
         raise VerificationError(
             f"required command '{command[0]}' was not found. "
-            "Install pypdf (`pip install pypdf`) or poppler-utils "
+            "Install pypdf (`uv pip install --python .venv/bin/python pypdf`) or poppler-utils "
             "(macOS: brew install poppler, Debian/Ubuntu: apt install poppler-utils, "
             "Windows: choco install poppler)"
         ) from exc

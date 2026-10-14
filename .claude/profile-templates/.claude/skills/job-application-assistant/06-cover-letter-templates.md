@@ -15,8 +15,10 @@ Cover letters use a custom LaTeX document class (`cover.cls`) with Lato/Raleway 
 ### Compile command
 
 ```bash
-cd cover_letters && xelatex -interaction=nonstopmode cover_<company>_<role>.tex
+cd cover_letters && ../tools/run_tex.sh xelatex -interaction=nonstopmode cover_<company>_<role>.tex
 ```
+
+The wrapper prefers the persistent repository-local `.texlive/` installation, then falls back to `xelatex` on `PATH`. Do not download a temporary TeX distribution for each draft.
 
 Expected output: `Output written on cover_<company>_<role>.pdf (1 page, ...)`. Any page count other than 1 is a failure that must be fixed before presenting to the user.
 
@@ -24,7 +26,7 @@ Expected output: `Output written on cover_<company>_<role>.pdf (1 page, ...)`. A
 
 After writing the cover letter and before presenting to the user, always compile and visually inspect the PDF. Iterate until the layout is clean:
 
-1. Run `xelatex -interaction=nonstopmode cover_<company>_<role>.tex`
+1. Run `../tools/run_tex.sh xelatex -interaction=nonstopmode cover_<company>_<role>.tex` from `cover_letters/`
 2. Confirm page count is exactly 1 and compile succeeded
 3. Read the PDF via the Read tool and visually check: signature fits at the bottom, no text cut off, bullet font matches body
 
@@ -156,7 +158,7 @@ Escape these wherever they appear in body text:
 - Tilde: `\textasciitilde{}`, caret: `\textasciicircum{}`, backslash: `\textbackslash{}`
 
 ### Non-English Cover Letters
-- Same template structure, just write content in the posting's language
+- Use the posting's language unless the user requests another variant; follow `03-writing-style.md` → **Japanese terminology and candidate preferences** for original names and technical terminology.
 - Adjust date format to local convention
 - Adjust closing to local convention (e.g. "Med venlig hilsen," for Danish)
 

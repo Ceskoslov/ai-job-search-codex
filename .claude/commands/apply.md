@@ -88,7 +88,7 @@ Read only the reference files you do not yet have:
 - `.claude/skills/job-application-assistant/05-cv-templates.md`
 - `.claude/skills/job-application-assistant/06-cover-letter-templates.md`
 
-**Resolve the active template (do this once, reuse everywhere below):** if `05-cv-templates.md` or `06-cover-letter-templates.md` opens with an `ACTIVE-TEMPLATE` managed block (inserted by `/add-template`), read its declared **source extension** and **compile command** — these override the stock `.tex`/lualatex (CV) and `.tex`/xelatex (cover letter) defaults for the rest of this workflow. Call these `<CV_EXT>`/`<CV_COMPILE>` and `<COVER_EXT>`/`<COVER_COMPILE>`; where no block is present, they default to `.tex`, the stock lualatex command, and the stock xelatex command respectively. Every `.tex` reference below is really `<CV_EXT>` or `<COVER_EXT>` — stock behavior is unchanged, this only matters when a custom template is active.
+**Resolve the active template (do this once, reuse everywhere below):** if `05-cv-templates.md` or `06-cover-letter-templates.md` opens with an `ACTIVE-TEMPLATE` managed block (inserted by `/add-template`), read its declared **source extension** and **compile command** — these override the stock `.tex`/lualatex (CV) and `.tex`/xelatex (cover letter) defaults for the rest of this workflow. Call these `<CV_EXT>`/`<CV_COMPILE>` and `<COVER_EXT>`/`<COVER_COMPILE>`; where no block is present, they default to `.tex` and the stock `tools/run_tex.sh` commands shown in Step 5a. Every `.tex` reference below is really `<CV_EXT>` or `<COVER_EXT>` — stock behavior is unchanged, this only matters when a custom template is active.
 
 Also read the most recent existing CV and cover letter files for concrete structural reference (one of each is enough):
 - Read any existing `cv/main_*<CV_EXT>` file as a structural reference
@@ -104,7 +104,7 @@ Also read the most recent existing CV and cover letter files for concrete struct
 *In both filenames below, `<company>_<role>` is derived by the **Subfolder naming** rule in `documents/README.md` — the same rule `/outcome` Step 1.4 uses for the archive folder, so a `/` or other path character in a company or role name can never split the filename across directories.*
 
 ### CV (`cv/main_<company>_<role><CV_EXT>`)
-- In the **CV language from the profile** (the `CV language:` line in CLAUDE.md's Identity section). When the profile does not set one, default to **English**. Never switch language per posting - the CV language is a profile-level choice, so all CVs stay consistent and reusable
+- In the **CV language from the profile** (the `CV language:` line in CLAUDE.md's Identity section). When the profile does not set one, default to **English**. Do not switch language merely because the posting differs. An explicit user request for another language or bilingual variants overrides this default for the task; use `_ja` / `_en` suffixes for parallel variants and apply `03-writing-style.md` multilingual rules
 - Follow the moderncv/banking format from `05-cv-templates.md`
 - Tailor the profile statement and experience bullets to the specific role
 - Reframe skills and achievements to match job requirements
@@ -237,11 +237,12 @@ After all edits are applied, the two files on disk are the final drafts.
 Use `<CV_COMPILE>` and `<COVER_COMPILE>` resolved in Step 2 (the active template's declared compile command, or the stock defaults below if no custom template is active):
 
 ```bash
-cd cv && lualatex -interaction=nonstopmode main_<company>_<role>.tex
-cd ../cover_letters && xelatex -interaction=nonstopmode cover_<company>_<role>.tex
+cd cv && ../tools/run_tex.sh lualatex -interaction=nonstopmode main_<company>_<role>.tex
+cd ../cover_letters && ../tools/run_tex.sh xelatex -interaction=nonstopmode cover_<company>_<role>.tex
 ```
 
-- **Stock CV** uses **lualatex** — pdflatex fails on modern MiKTeX with fontawesome5 font-expansion errors. lualatex handles the same sources cleanly.
+- **Toolchain resolution:** `tools/run_tex.sh` first uses `AI_JOB_SEARCH_TEX_BIN` when explicitly set, then the persistent repository-local `.texlive/bin/*` installation, then an engine already available on `PATH`. Invoke the wrapper from the repository workflow instead of downloading a temporary TeX distribution for each application. If no engine is found, report the missing dependency and follow `SETUP.md`; never silently install or delete a toolchain during `/apply`.
+- **Stock CV** uses **lualatex** — pdflatex can fail on modern MiKTeX with Font Awesome icon-font expansion errors. lualatex handles the same sources cleanly; moderncv 2.6+ requires `fontawesome6`, while older releases may require `fontawesome5`.
 - **Stock cover letter** uses **xelatex** — cover.cls requires fontspec.
 - **Custom template active:** run its declared `<CV_COMPILE>`/`<COVER_COMPILE>` command instead, substituting the actual filename for `<file>`. Never fall back to lualatex/xelatex when a custom template's compile command is a different toolchain (e.g. `typst compile`) — that command is what the manifest actually verified in `/add-template` Step 4.
 
@@ -297,7 +298,7 @@ Do not proceed to Step 6 until both PDFs pass inspection.
 
 An ATS parser reads the PDF's embedded **text layer**, not the rendered page — a CV that passed visual inspection can still extract as garbage (icon glyphs where the contact details should be, scrambled reading order in multi-column layouts). This step verifies what a parser actually sees. It applies to the **CV only**; cover letters rarely go through keyword screening.
 
-**Availability check:** extract with `python tools/verify_pdf.py` (tries **pypdf** first — BSD, `pip install pypdf` — then Poppler `pdftotext`). If both are missing, print a one-line warning that the mechanical parse check is skipped, do the keyword-coverage check (item 3 below) against your visual Read of the PDF instead, and note the degraded mode in the Step 6 report. Same graceful-skip pattern as the salary lookup. If a documented fallback still shells out to `pdftotext -layout`, keep the `-enc UTF-8` flag: Xpdf-based builds default to Latin-1 output, and without it a correct non-ASCII CV fails the replacement-character check below.
+**Availability check:** extract with `.venv/bin/python tools/verify_pdf.py` (tries **pypdf** first — BSD, install with `uv pip install --python .venv/bin/python pypdf` — then Poppler `pdftotext`). If both are missing, print a one-line warning that the mechanical parse check is skipped, do the keyword-coverage check (item 3 below) against your visual Read of the PDF instead, and note the degraded mode in the Step 6 report. Same graceful-skip pattern as the salary lookup. If a documented fallback still shells out to `pdftotext -layout`, keep the `-enc UTF-8` flag: Xpdf-based builds default to Latin-1 output, and without it a correct non-ASCII CV fails the replacement-character check below.
 
 **1. Extract the text layer:**
 
