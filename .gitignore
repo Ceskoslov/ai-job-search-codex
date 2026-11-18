@@ -1,5 +1,6 @@
 # Dependencies
-node_modules/
+node_modules
+bun.lock
 
 # Python
 __pycache__/
@@ -7,7 +8,6 @@ __pycache__/
 *.pyo
 .venv/
 venv/
-.texlive/
 
 # Compiled documents
 *.pdf
@@ -25,6 +25,8 @@ salary_data.json
 # its own directory, so these land at .claude/skills/job-scraper/job_scraper/*.
 # A rooted `job_scraper/...` pattern silently fails to match them.
 **/job_scraper/seen_jobs.json
+# Backups written by `tools/job_key.py --audit --migrate` hold the same history.
+**/job_scraper/seen_jobs.json.bak-*
 **/job_scraper/notion_sync.json
 **/job_scraper/*.md
 *_BehavioralReport.pdf
@@ -51,6 +53,7 @@ Thumbs.db
 
 # Memory files (Claude Code user-specific)
 .claude/projects/
+.claude/settings.local.json
 
 # Skills lock (auto-generated)
 skills-lock.json
@@ -75,9 +78,6 @@ documents/linkedin/**
 documents/diplomas/**
 documents/references/**
 documents/projects/**
-
-# Imported personal interview review retained at its original path.
-documents/interview_failure_review.md
 # Also where /interview saves its prep packs (interview_prep_<stage>.md): these
 # name the employers applied to, quote what was submitted, and set out the
 # candidate's weak points.
@@ -115,12 +115,17 @@ company_research/*.json
 
 # Agent skills: track the source, ignore only deps and logs.
 # (A blanket `.agents/` ignore silently drops the job-search CLI skills from the repo.)
-.agents/**/node_modules/
+.agents/**/node_modules
 .agents/**/*.log
 .agents/usage/
 
 # Brainstorm mockups (superpowers visual companion) - never ship
 .superpowers/
+
+# Local personal files and build cache.
+.texlive/
+documents/interview_failure_review.md
+documents/application_packages/
 
 # Instantiated personal workspace; clean seeds live in .claude/profile-templates/.
 /CLAUDE.md
